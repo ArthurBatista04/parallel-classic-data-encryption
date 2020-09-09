@@ -11,6 +11,7 @@ typedef struct opt_params
 	int num_threads;
 	int key;
 	char *text;
+	int print;
 
 } opt_params;
 
@@ -131,7 +132,8 @@ opt_params init_params(char **args, int argc)
 {
 	int opt;
 	opt_params input;
-	while ((opt = getopt(argc, args, "t:a:k:")) != -1)
+	input.print = FALSE;
+	while ((opt = getopt(argc, args, "t:a:k:p")) != -1)
 	{
 		switch (opt)
 		{
@@ -143,6 +145,9 @@ opt_params init_params(char **args, int argc)
 			break;
 		case 'k':
 			input.key = strtoul(optarg, NULL, 0);
+			break;
+		case 'p':
+			input.print = TRUE;
 			break;
 		case '?':
 			exit(EXIT_FAILURE);
@@ -161,6 +166,7 @@ int main(int argc, char *argv[])
 
 	char *descript = decryptRailFence(params.key, cript);
 
-	writeFile(descript);
+	if (params.print)
+		writeFile(descript);
 	return 0;
 }

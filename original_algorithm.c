@@ -2,17 +2,27 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <unistd.h>
 #define TRUE 1
 #define FALSE 0
 
-char *encryptRailFence(char *text, int key)
+typedef struct opt_params
+{
+	int num_threads;
+	int key;
+	char *text;
+
+} opt_params;
+
+char *
+encryptRailFence(int key, char *text)
 {
 	const int text_len = strlen(text);
 	char rail[key][text_len];
 
 	for (int i = 0; i < key; i++)
 		for (int j = 0; j < text_len; j++)
-			rail[i][j] = '\n';
+			rail[i][j] = '0';
 
 	int dir_down = FALSE;
 	int row = 0, col = 0;
@@ -32,20 +42,20 @@ char *encryptRailFence(char *text, int key)
 	int count = 0;
 	for (int i = 0; i < key; i++)
 		for (int j = 0; j < text_len; j++)
-			if (rail[i][j] != '\n')
+			if (rail[i][j] != '0')
 				result[count++] = rail[i][j];
 
 	return result;
 }
 
-char *decryptRailFence(char *cipher, int key)
+char *decryptRailFence(int key, char *cipher)
 {
 	const int cipher_len = strlen(cipher);
 	char rail[key][cipher_len];
 
 	for (int i = 0; i < key; i++)
 		for (int j = 0; j < cipher_len; j++)
-			rail[i][j] = '\n';
+			rail[i][j] = '0';
 
 	int dir_down;
 
@@ -88,16 +98,69 @@ char *decryptRailFence(char *cipher, int key)
 	}
 	return result;
 }
-
-int main()
+char *readFile(char *file_path)
 {
-	printf("%s\n", encryptRailFence("attack at once", 2));
-	printf("%s\n", encryptRailFence("GeeksforGeeks ", 3));
-	printf("%s\n", encryptRailFence("defend the east wall", 3));
+	FILE *fp = fopen(file_path, "r");
+	if (fp == NULL)
+	{
+		printf("File Not Found!\n");
+		exit(EXIT_FAILURE);
+	}
+	fseek(fp, 0L, SEEK_END);
+	long int res = ftell(fp);
+	char *text = (char *)calloc(res, sizeof(char));
+	fseek(fp, 0L, SEEK_SET);
+	fread(text, 1, res, fp);
+	fclose(fp);
+	return text;
+}
 
-	printf("%s\n", decryptRailFence("GsGsekfrek eoe", 3));
-	printf("%s\n", decryptRailFence("atc toctaka ne", 2));
-	printf("%s\n", decryptRailFence("dnhaweedtees alf tl", 3));
+void writeFile(char *output)
+{
+	FILE *fp = fopen("output.txt", "w");
+	if (fp == NULL)
+	{
+		exit(EXIT_FAILURE);
+	}
 
+	fwrite(output, 1, strlen(output), fp);
+	fclose(fp);
+}
+
+opt_params init_params(char **args, int argc)
+{
+	int opt;
+	opt_params input;
+	while ((opt = getopt(argc, args, "t:a:k:")) != -1)
+	{
+		switch (opt)
+		{
+		case 't':
+			input.num_threads = strtoul(optarg, NULL, 0);
+			break;
+		case 'a':
+			input.text = readFile(optarg);
+			break;
+		case 'k':
+			input.key = strtoul(optarg, NULL, 0);
+			break;
+		case '?':
+			exit(EXIT_FAILURE);
+		default:
+			abort();
+		}
+	}
+	return input;
+}
+
+int main(int argc, char *argv[])
+{
+	opt_params params = init_params(argv, argc);
+
+	char *cript = encryptRailFence(params.key, params.text);
+
+	char *descript = decryptRailFence(params.key, cript);
+
+	writeFile(descript);
 	return 0;
 }

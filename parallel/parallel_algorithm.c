@@ -5,7 +5,7 @@
 
 char **decrypt;
 char **encrypt;
-
+//teste
 char *read_file(char *file_path) {
     FILE *fp = fopen(file_path, "r");
     if (fp == NULL) {

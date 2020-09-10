@@ -30,11 +30,10 @@ void final_output(char **array_of_chars, int num_of_threads, FILE *fp) {
         for (long int j = 0; j < columns; j++) {
             output[count++] = array_of_chars[i][j];
         }
-        long int messageSize = columns * sizeof(char) + 1;
-        char *formated_message = malloc(messageSize);
+        long int messageSize = columns * sizeof(char);
 
-        sprintf(formated_message, "%s\n", output);
-        fwrite(formated_message, 1, messageSize, fp);
+
+        fwrite(output, 1, messageSize, fp);
     }
     fclose(fp);
 }

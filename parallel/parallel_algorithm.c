@@ -1,120 +1,11 @@
-#include <pthread.h>
-#include <string.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <errno.h>
-#include <ctype.h>
-#include <limits.h>
-#define TRUE 1
-#define FALSE 0
 
-typedef struct opt_params
-{
-	int num_threads;
-	int key;
-	char *text;
-	int print;
-
-} opt_params;
-
-typedef struct thread_info
-{
-	int thread_id;
-	char *sub_text;
-	int key;
-
-} thread_info;
-
-char **encrypt;
+#include "./parallel_algorithm.h"
+#include "../decrypt_encrypt_functions.h"
 
 char **decrypt;
+char **encrypt;
 
-char *
-encryptRailFence(int key, char *text)
-{
-	const int text_len = strlen(text);
-	char rail[key][text_len];
-
-	for (int i = 0; i < key; i++)
-		for (int j = 0; j < text_len; j++)
-			rail[i][j] = '0';
-
-	int dir_down = FALSE;
-	int row = 0, col = 0;
-
-	for (int i = 0; i < text_len; i++)
-	{
-
-		if (row == 0 || row == key - 1)
-			dir_down = !dir_down;
-
-		rail[row][col++] = text[i];
-
-		dir_down ? row++ : row--;
-	}
-
-	char *result = (char *)calloc(text_len, sizeof(char));
-	int count = 0;
-	for (int i = 0; i < key; i++)
-		for (int j = 0; j < text_len; j++)
-			if (rail[i][j] != '0')
-				result[count++] = rail[i][j];
-
-	return result;
-}
-
-char *decryptRailFence(int key, char *cipher)
-{
-	const int cipher_len = strlen(cipher);
-	char rail[key][cipher_len];
-
-	for (int i = 0; i < key; i++)
-		for (int j = 0; j < cipher_len; j++)
-			rail[i][j] = '0';
-
-	int dir_down;
-
-	int row = 0, col = 0;
-
-	for (int i = 0; i < cipher_len; i++)
-	{
-
-		if (row == 0)
-			dir_down = TRUE;
-		if (row == key - 1)
-			dir_down = FALSE;
-
-		rail[row][col++] = '*';
-
-		dir_down ? row++ : row--;
-	}
-
-	int index = 0;
-	for (int i = 0; i < key; i++)
-		for (int j = 0; j < cipher_len; j++)
-			if (rail[i][j] == '*' && index < cipher_len)
-				rail[i][j] = cipher[index++];
-
-	char *result = (char *)calloc(cipher_len, sizeof(char));
-	int count = 0;
-	row = 0, col = 0;
-	for (int i = 0; i < cipher_len; i++)
-	{
-
-		if (row == 0)
-			dir_down = TRUE;
-		if (row == key - 1)
-			dir_down = FALSE;
-
-		if (rail[row][col] != '*')
-			result[count++] = rail[row][col++];
-
-		dir_down ? row++ : row--;
-	}
-	return result;
-}
-char *readFile(char *file_path)
+char *read_file(char *file_path)
 {
 	FILE *fp = fopen(file_path, "r");
 	if (fp == NULL)
@@ -146,10 +37,10 @@ char *final_output(char **array_of_chars, int num_of_threads, int text_size)
 	return output;
 }
 
-void writeFile(int num_threads, int text_size)
+void write_file(int num_threads, int text_size)
 {
-	FILE *fp = fopen("output_encrypt.txt", "w");
-	FILE *fp2 = fopen("output_decrypt.txt", "w");
+	FILE *fp = fopen("./output/parallel_algorithm_output_encrypt.txt", "w");
+	FILE *fp2 = fopen("./output/parallel_algorithm_output_decrypt.txt", "w");
 	if (fp == NULL || fp2 == NULL)
 	{
 		exit(EXIT_FAILURE);
@@ -168,6 +59,7 @@ opt_params init_params(char **args, int argc)
 	int opt;
 	opt_params input;
 	input.print = FALSE;
+	input.key = 3;
 	while ((opt = getopt(argc, args, "t:a:k:p")) != -1)
 	{
 		switch (opt)
@@ -176,7 +68,7 @@ opt_params init_params(char **args, int argc)
 			input.num_threads = strtoul(optarg, NULL, 0);
 			break;
 		case 'a':
-			input.text = readFile(optarg);
+			input.text = read_file(optarg);
 			break;
 		case 'k':
 			input.key = strtoul(optarg, NULL, 0);
@@ -193,7 +85,7 @@ opt_params init_params(char **args, int argc)
 	return input;
 }
 
-char **getIntervalSubstring(int num_threads, char *text)
+char **get_interval_substring(int num_threads, char *text)
 {
 	int size_text = strlen(text);
 	int start, end;
@@ -229,8 +121,8 @@ void *data_encrypt(void *input)
 {
 	thread_info *info = (thread_info *)input;
 
-	encrypt[info->thread_id] = encryptRailFence(info->key, info->sub_text);
-	decrypt[info->thread_id] = decryptRailFence(info->key, encrypt[info->thread_id]);
+	encrypt[info->thread_id] = encrypt_rail_fence(info->key, info->sub_text);
+	decrypt[info->thread_id] = decrypt_rail_fence(info->key, encrypt[info->thread_id]);
 }
 
 int main(int argc, char *argv[])
@@ -239,7 +131,7 @@ int main(int argc, char *argv[])
 	pthread_t threads[params.num_threads];
 	encrypt = (char **)calloc(params.num_threads, sizeof(char *));
 	decrypt = (char **)calloc(params.num_threads, sizeof(char *));
-	char **substrings = getIntervalSubstring(params.num_threads, params.text);
+	char **substrings = get_interval_substring(params.num_threads, params.text);
 	int rc;
 	for (int t = 0; t < params.num_threads; t++)
 	{
@@ -259,7 +151,7 @@ int main(int argc, char *argv[])
 	}
 
 	if (params.print)
-		writeFile(params.num_threads, strlen(params.text));
+		write_file(params.num_threads, strlen(params.text));
 
 	return 0;
 }

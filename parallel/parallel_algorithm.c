@@ -25,12 +25,12 @@ void final_output(char **array_of_chars, int num_of_threads, FILE *fp) {
     for (int i = 0; i < num_of_threads; i++) {
         int count = 0;
 
-        int columns = strlen(array_of_chars[i]);
+        long int columns = strlen(array_of_chars[i]);
         char *output = calloc(columns, sizeof(char));
-        for (int j = 0; j < columns; j++) {
+        for (long int j = 0; j < columns; j++) {
             output[count++] = array_of_chars[i][j];
         }
-        int messageSize = columns * sizeof(char) + 1;
+        long int messageSize = columns * sizeof(char) + 1;
         char *formated_message = malloc(messageSize);
 
         sprintf(formated_message, "%s\n", output);
@@ -78,13 +78,13 @@ opt_params init_params(char **args, int argc) {
 }
 
 char **get_interval_substring(int num_threads, char *text) {
-    unsigned long long int size_text = strlen(text);
-    unsigned long long int start, end;
+    long int size_text = strlen(text);
+    long int start, end;
     char **substrings = (char **)calloc(num_threads, sizeof(char *));
-    unsigned long long int num_of_substrings = 0;
+    long int num_of_substrings = 0;
 
-    unsigned long long int length_per_thread = size_text / num_threads;
-    unsigned long long int bonus = size_text - length_per_thread * num_threads;
+    long int length_per_thread = size_text / num_threads;
+    long int bonus = size_text - length_per_thread * num_threads;
 
     for (start = 0, end = length_per_thread;
          start < size_text;
@@ -94,8 +94,8 @@ char **get_interval_substring(int num_threads, char *text) {
             bonus--;
         }
         char *substring = calloc(end - start, sizeof(char));
-        unsigned long long int count = 0;
-        for (unsigned long long int i = start; i < end; i++) {
+        long int count = 0;
+        for (long int i = start; i < end; i++) {
             substring[count++] = text[i];
         }
         substrings[num_of_substrings++] = substring;
@@ -133,8 +133,8 @@ int main(int argc, char *argv[]) {
         printf("In main: thread %d has finished processing\n", t + 1);
     }
 
-    // if (params.print)
-    //     write_file(params.num_threads);
+    if (params.print)
+        write_file(params.num_threads);
 
     return 0;
 }

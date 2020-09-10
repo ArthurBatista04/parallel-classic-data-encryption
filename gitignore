@@ -1,0 +1,4 @@
+*.o
+output/
+text.txt
+tiny.txt

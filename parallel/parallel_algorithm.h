@@ -8,6 +8,7 @@
 #include <errno.h>
 #include <ctype.h>
 #include <limits.h>
+#include <math.h>
 
 #define TRUE 1
 #define FALSE 0
@@ -35,9 +36,9 @@ extern char **decrypt;
 
 char *read_file(char *file_path);
 
-char *final_output(char **array_of_chars, int num_of_threads, int text_size);
+void final_output(char **array_of_chars, int num_of_threads, FILE *fp);
 
-void write_file(int num_threads, int text_size);
+void write_file(int num_threads);
 
 opt_params init_params(char **args, int argc);
 

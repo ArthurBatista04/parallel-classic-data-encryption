@@ -22,22 +22,29 @@ char *read_file(char *file_path)
 	return text;
 }
 
-char *final_output(char **array_of_chars, int num_of_threads, int text_size)
+void final_output(char **array_of_chars, int num_of_threads, FILE *fp)
 {
-	char *output = calloc(text_size, sizeof(char));
-	int count = 0;
+
 	for (int i = 0; i < num_of_threads; i++)
 	{
+		int count = 0;
+
 		int columns = strlen(array_of_chars[i]);
+		char *output = calloc(columns, sizeof(char));
 		for (int j = 0; j < columns; j++)
 		{
 			output[count++] = array_of_chars[i][j];
 		}
+		int messageSize = columns * sizeof(char) + 1;
+		char *formated_message = malloc(messageSize);
+
+		sprintf(formated_message, "%s\n", output);
+		fwrite(formated_message, 1, messageSize, fp);
 	}
-	return output;
+	fclose(fp);
 }
 
-void write_file(int num_threads, int text_size)
+void write_file(int num_threads)
 {
 	FILE *fp = fopen("./output/parallel_algorithm_output_encrypt.txt", "w");
 	FILE *fp2 = fopen("./output/parallel_algorithm_output_decrypt.txt", "w");
@@ -45,13 +52,8 @@ void write_file(int num_threads, int text_size)
 	{
 		exit(EXIT_FAILURE);
 	}
-	char *encrypt_string = final_output(encrypt, num_threads, text_size);
-	char *decrypt_string = final_output(decrypt, num_threads, text_size);
-
-	fwrite(encrypt_string, 1, text_size, fp);
-	fclose(fp);
-	fwrite(decrypt_string, 1, text_size, fp2);
-	fclose(fp2);
+	final_output(encrypt, num_threads, fp);
+	final_output(decrypt, num_threads, fp2);
 }
 
 opt_params init_params(char **args, int argc)
@@ -151,7 +153,7 @@ int main(int argc, char *argv[])
 	}
 
 	if (params.print)
-		write_file(params.num_threads, strlen(params.text));
+		write_file(params.num_threads);
 
 	return 0;
 }

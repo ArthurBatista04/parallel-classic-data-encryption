@@ -3,7 +3,12 @@
 char *
 encrypt_rail_fence(int key, char *text) {
     const unsigned long long int text_len = strlen(text);
-    char rail[key][text_len];
+    // char rail[key][text_len];
+    char **rail = malloc(key * sizeof(char *));
+
+    for (int i = 0; i < key; i++) {
+        rail[i] = malloc(text_len * sizeof(char));
+    }
 
     for (unsigned long long int i = 0; i < key; i++)
         for (unsigned long long int j = 0; j < text_len; j++)
@@ -33,7 +38,12 @@ encrypt_rail_fence(int key, char *text) {
 
 char *decrypt_rail_fence(int key, char *cipher) {
     const unsigned long long int cipher_len = strlen(cipher);
-    char rail[key][cipher_len];
+    // char rail[key][cipher_len];
+    char **rail = malloc(key * sizeof(char *));
+
+    for (int i = 0; i < key; i++) {
+        rail[i] = malloc(cipher_len * sizeof(char));
+    }
 
     for (unsigned long long int i = 0; i < key; i++)
         for (unsigned long long int j = 0; j < cipher_len; j++)

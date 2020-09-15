@@ -2,5 +2,7 @@
 output/
 text.txt
 tiny.txt
+medium.txt
+big.txt
 parallel_version
 original_version

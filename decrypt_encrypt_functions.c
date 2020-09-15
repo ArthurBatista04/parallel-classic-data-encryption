@@ -32,7 +32,9 @@ encrypt_rail_fence(int key, char *text) {
         for (long int j = 0; j < text_len; j++)
             if (rail[i][j] != '0')
                 result[count++] = rail[i][j];
-
+    for (long int i = 0; i < key; i++)
+        free(rail[i]);
+    free(rail);
     return result;
 }
 
@@ -84,5 +86,8 @@ char *decrypt_rail_fence(int key, char *cipher) {
 
         dir_down ? row++ : row--;
     }
+    for (long int i = 0; i < key; i++)
+        free(rail[i]);
+    free(rail);
     return result;
 }

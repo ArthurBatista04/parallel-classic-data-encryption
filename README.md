@@ -1,6 +1,6 @@
 # A simple parallel implementation of the Rail Fence Cipher algorithm.
 
-This implementation was develop for the discipline of Parallel Computing (Computer Science - UEM) in September / 2020 by @ArthurBatista04 and @deelefrati .
+This implementation was develop for the discipline of Parallel Computing (Computer Science - UEM) in September / 2020 by Arthur R. Batista and Douglas F. Delefrati.
 
 # The Rail Fence Cipher algorithm
 

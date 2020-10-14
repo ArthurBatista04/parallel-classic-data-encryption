@@ -63,10 +63,10 @@ if [ ! -f "$SMALL_FILE" ] || [ ! -f "$MEDIUM_FILE" ] || [ ! -f "$BIG_FILE" ] || 
 	do
 		echo "Generating $i input file..."
 		case "$i" in
-			SMALL ) base64 /dev/urandom | head -c 550502 > small.txt ;;
-			MEDIUM ) base64 /dev/urandom | head -c 100000 > medium.txt ;;
-			BIG ) base64 /dev/urandom | head -c 190000 > big.txt ;;
-			TURNING_POINT ) base64 /dev/urandom | head -c 209700 > turning_point.txt ;;
+			SMALL ) base64 /dev/urandom | head -c 550502400 > small.txt ;;
+			MEDIUM ) base64 /dev/urandom | head -c 1000000000 > medium.txt ;;
+			BIG ) base64 /dev/urandom | head -c 1900000000 > big.txt ;;
+			TURNING_POINT ) base64 /dev/urandom | head -c 2097000000 > turning_point.txt ;;
 		esac
 	done
 fi

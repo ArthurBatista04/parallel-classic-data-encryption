@@ -58,7 +58,7 @@ then
 fi
 
 
-if [ ! -f "$SMALL_FILE" ] && [ ! -f "$MEDIUM_FILE" ] && [ ! -f "$BIG_FILE" ] && [ ! -f "$TURNING_POINT_FILE" ]  ; then
+if [ ! -f "$SMALL_FILE" ] || [ ! -f "$MEDIUM_FILE" ] || [ ! -f "$BIG_FILE" ] || [ ! -f "$TURNING_POINT_FILE" ]  ; then
 	for i in SMALL MEDIUM BIG TURNING_POINT 
 	do
 		echo "Generating $i input file..."

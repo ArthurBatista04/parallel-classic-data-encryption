@@ -35,7 +35,7 @@ opt_params init_params(char **args, int argc) {
     opt_params input;
     input.print = FALSE;
     input.key = 3;
-    while ((opt = getopt(argc, args, "a:k:p")) != -1) {
+    while ((opt = getopt(argc, args, "a:k:ph")) != -1) {
         switch (opt) {
             case 'a':
                 input.text = read_file(optarg);
@@ -46,6 +46,9 @@ opt_params init_params(char **args, int argc) {
             case 'p':
                 input.print = TRUE;
                 break;
+			case 'h':
+				printf("Usage: %s [-a (input file path)] [-k(key for encryption)] optional[-p(gen output files) -h(help)]\n",args[0]);
+				exit(EXIT_SUCCESS);
             case '?':
                 exit(EXIT_FAILURE);
             default:

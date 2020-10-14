@@ -53,7 +53,7 @@ opt_params init_params(char **args, int argc) {
     opt_params input;
     input.print = FALSE;
     input.key = 3;
-    while ((opt = getopt(argc, args, "t:a:k:p")) != -1) {
+    while ((opt = getopt(argc, args, "t:a:k:ph")) != -1) {
         switch (opt) {
             case 't':
                 input.num_threads = strtoul(optarg, NULL, 0);
@@ -67,6 +67,9 @@ opt_params init_params(char **args, int argc) {
             case 'p':
                 input.print = TRUE;
                 break;
+			case 'h':
+				printf("Usage: %s [-a (input file path)] [-k(key for encryption)] [-t(number of threads)] optional[-p(gen output files) -h(help)]\n",args[0]);
+				exit(EXIT_SUCCESS);
             case '?':
                 exit(EXIT_FAILURE);
             default:

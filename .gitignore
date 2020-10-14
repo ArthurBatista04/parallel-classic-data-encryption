@@ -4,5 +4,8 @@ text.txt
 tiny.txt
 medium.txt
 big.txt
+turning_point.txt
 parallel_version
 original_version
+perf.data
+perf.data.old

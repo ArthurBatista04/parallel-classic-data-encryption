@@ -11,7 +11,8 @@ main:
 	$(CXX) -c decrypt_encrypt_functions.c
 	$(CXX) -pthread  parallel_algorithm.o decrypt_encrypt_functions.o -o parallel_version
 	$(CXX)  original_algorithm.o decrypt_encrypt_functions.o -o original_version
+	cd ./relatorio && pdflatex main.tex
 
 	
 clean:
-	rm -f *.o parallel_version original_version
+	rm -f *.o parallel_version original_version relatorio/main.pdf

@@ -121,7 +121,7 @@ int main(int argc, char *argv[]) {
     char **substrings = get_interval_substring(params.num_threads, params.text);
     int rc;
     for (int t = 0; t < params.num_threads; t++) {
-        printf("In main: creating thread %d\n", t + 1);
+       
         thread_info *info = malloc(sizeof(thread_info));
         info->thread_id = t;
         info->key = params.key;
@@ -132,7 +132,7 @@ int main(int argc, char *argv[]) {
 
     for (int t = 0; t < params.num_threads; t++) {
         rc = pthread_join(threads[t], NULL);
-        printf("In main: thread %d has finished processing\n", t + 1);
+      
     }
 
     if (params.print)

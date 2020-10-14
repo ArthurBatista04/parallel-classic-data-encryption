@@ -1,6 +1,7 @@
 *.o
 output/
 text.txt
+small.txt
 tiny.txt
 medium.txt
 big.txt
